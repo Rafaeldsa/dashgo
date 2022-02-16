@@ -1,13 +1,15 @@
-import { Box, Flex, Button, Heading, Icon, Table, Thead, Tr, Th, Td, Tbody, Checkbox, Text, useBreakpointValue } from '@chakra-ui/react';
-import { RiAddLine, RiPencilLine } from 'react-icons/ri';
+import { Box, Flex, Button, Heading, Icon, Table, Thead, Tr, Th, Td, Tbody, Checkbox, Text, useBreakpointValue, Spinner } from '@chakra-ui/react';
+import { RiAddLine } from 'react-icons/ri';
 import Link from 'next/link';
 
 import { Header } from '../../components/Header';
 import { Pagination } from '../../components/Pagination';
 import { Sidebar } from '../../components/Sidebar';
-
+import { useUser } from '../../services/hooks/useUsers';
 
 export default function UserList() {
+    const { data, isLoading, isFetching, error } = useUser();
+
     const isWideVersion = useBreakpointValue({
         base: false,
         lg: true
@@ -36,7 +38,11 @@ export default function UserList() {
                         justify="space-between"
                         align="center"
                     >
-                        <Heading size="lg" fontWeight="normal">Usuários</Heading>
+                        <Heading size="lg" fontWeight="normal">
+                            Usuários
+
+                            {!isLoading && isFetching && <Spinner size='sm' color='gray.500' ml='4' />}
+                        </Heading>
                         <Link href="/users/create" passHref>
                             <Button
                                 as="a"
@@ -49,94 +55,53 @@ export default function UserList() {
                             </Button>
                         </Link>
                     </Flex>
+                    {isLoading ? (
+                        <Flex justify="center">
+                            <Spinner />
+                        </Flex>
+                    ) : error ? (
+                        <Flex justify="center">
+                            <Text>Falaha ao obter dados dos usuários.</Text>
+                        </Flex>
+                    ) : (
+                        <>
+                            <Table
+                                colorScheme="whiteAlpha"
+                            >
+                                <Thead>
+                                    <Tr>
+                                        <Th px={["4", "4", "6"]} color="gray.300" width="8">
+                                            <Checkbox colorScheme="pink" />
+                                        </Th>
+                                        <Th>Usuário</Th>
+                                        {isWideVersion && <Th>Data de cadastro</Th>}
+                                        {isWideVersion && <Th width="8"></Th>}
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {data.map(user => {
+                                        return (
+                                            <Tr key={user.id}>
+                                                <Td px={["4", "4", "6"]}>
+                                                    <Checkbox colorScheme="pink" />
+                                                </Td>
+                                                <Td>
+                                                    <Box>
+                                                        <Text fontWeight="bold">{user.name}</Text>
+                                                        <Text fontSize="sm" color="gray.300">{user.email}</Text>
+                                                    </Box>
+                                                </Td>
+                                                {isWideVersion && <Td>{user.createdAt}</Td>}
 
-                    <Table
-                        colorScheme="whiteAlpha"
-                    >
-                        <Thead>
-                            <Tr>
-                                <Th px={["4", "4", "6"]} color="gray.300" width="8">
-                                    <Checkbox colorScheme="pink" />
-                                </Th>
-                                <Th>Usuário</Th>
-                                {isWideVersion && <Th>Data de cadastro</Th>}
-                                {isWideVersion && <Th width="8"></Th>}
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            <Tr>
-                                <Td px={["4", "4", "6"]}>
-                                    <Checkbox colorScheme="pink" />
-                                </Td>
-                                <Td>
-                                    <Box>
-                                        <Text fontWeight="bold">Rafael Dantas</Text>
-                                        <Text fontSize="sm" color="gray.300">rafaeldantas461@gmail.com</Text>
-                                    </Box>
-                                </Td>
-                                {isWideVersion && <Td>01 de Novembro de 2021</Td>}
-                                {isWideVersion && <Td>
-                                    <Button
-                                        as="a"
-                                        size="sm"
-                                        fontSize="sm"
-                                        colorScheme="purple"
-                                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                                    >
-                                        Editar
-                                    </Button>
-                                </Td>}
-                            </Tr>
-                            <Tr>
-                                <Td px={["4", "4", "6"]}>
-                                    <Checkbox colorScheme="pink" />
-                                </Td>
-                                <Td>
-                                    <Box>
-                                        <Text fontWeight="bold">Rafael Dantas</Text>
-                                        <Text fontSize="sm" color="gray.300">rafaeldantas461@gmail.com</Text>
-                                    </Box>
-                                </Td>
-                                {isWideVersion && <Td>01 de Novembro de 2021</Td>}
-                                {isWideVersion && <Td>
-                                    <Button
-                                        as="a"
-                                        size="sm"
-                                        fontSize="sm"
-                                        colorScheme="purple"
-                                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                                    >
-                                        Editar
-                                    </Button>
-                                </Td>}
-                            </Tr>
-                            <Tr>
-                                <Td px={["4", "4", "6"]}>
-                                    <Checkbox colorScheme="pink" />
-                                </Td>
-                                <Td>
-                                    <Box>
-                                        <Text fontWeight="bold">Rafael Dantas</Text>
-                                        <Text fontSize="sm" color="gray.300">rafaeldantas461@gmail.com</Text>
-                                    </Box>
-                                </Td>
-                                {isWideVersion && <Td>01 de Novembro de 2021</Td>}
-                                {isWideVersion && <Td>
-                                    <Button
-                                        as="a"
-                                        size="sm"
-                                        fontSize="sm"
-                                        colorScheme="purple"
-                                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                                    >
-                                        Editar
-                                    </Button>
-                                </Td>}
-                            </Tr>
-                        </Tbody>
-                    </Table>
+                                            </Tr>
+                                        )
+                                    })}
+                                </Tbody>
+                            </Table>
 
-                    <Pagination />
+                            <Pagination />
+                        </>
+                    )}
                 </Box>
             </Flex>
         </Box>
