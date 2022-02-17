@@ -6,8 +6,9 @@ import { theme } from '../styles/theme';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { SidebarDrawerProvider } from '../contexts/SidebarDrawerontext';
 import { makeServer } from '../services/mirage';
+import { queryClient } from '../services/queryClient';
 
-const queryClient = new QueryClient()
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   makeServer();
